@@ -2655,9 +2655,9 @@ Specifically, the GPL parts of FFmpeg are:
     - `compat/solaris/make_sunver.pl`
     - `doc/t2h.pm`
     - `doc/texi2pod.pl`
-    - `libswresample/tests/swresample.c`
-    - `tests/checkasm/*`
-    - `tests/tiny_ssim.c`
+    - `libswresample/org.ibs.tests/swresample.c`
+    - `org.ibs.tests/checkasm/*`
+    - `org.ibs.tests/tiny_ssim.c`
 - the following filters in libavfilter:
     - `signature_lookup.c`
     - `vf_blackframe.c`
@@ -2707,7 +2707,7 @@ There are a handful of files under other licensing terms, namely:
   documentation accompanying your program if you only distribute executables.
   You must also indicate any changes including additions and deletions to
   those three files in the documentation.
-* `tests/reference.pnm` is under the expat license.
+* `org.ibs.tests/reference.pnm` is under the expat license.
 
 
 ## External libraries
@@ -4163,7 +4163,7 @@ License notice for ipcz
 License notice for jsoncpp
 --------------------
 The JsonCpp library's source code, including accompanying documentation, 
-tests and demonstration applications, are licensed under the following
+org.ibs.tests and demonstration applications, are licensed under the following
 conditions...
 
 The author (Baptiste Lepilleur) explicitly disclaims copyright in all 
