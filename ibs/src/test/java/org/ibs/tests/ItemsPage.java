@@ -30,7 +30,7 @@ public class ItemsPage {
         driver.findElement(path).sendKeys(keys);
     }
     public void checkTable(By path, String name, String type, String exotic){
-        new WebDriverWait(driver, Duration.ofSeconds(1))
+        new WebDriverWait(driver, Duration.ofSeconds(2))
                 .until(ExpectedConditions.visibilityOfElementLocated(path));
 
         WebElement table = driver.findElement(path);
@@ -43,12 +43,14 @@ public class ItemsPage {
             if (columns.size() >= 3 &&
                     columns.get(0).getText().equals(name) &&
                     columns.get(1).getText().equals(type) &&
-                    columns.get(2).getText().equals(exotic)) {
+                    columns.get(2).getText().equals(exotic))
+                {
                 itemExists = true;
-                System.out.println("Запись " + name + " с указанными параметрами найдена");
                 break;
-            }
+                }
         }
+        if(itemExists){ System.out.println("Запись " + name + " с указанными параметрами найдена");}
+        else {System.out.println("Запись " + name + " с указанными параметрами не найдена");}
         Assertions.assertTrue(itemExists, "Нет указанной записи в таблице");
     }
 

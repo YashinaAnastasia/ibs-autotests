@@ -18,7 +18,7 @@ public class BaseTests {
     @BeforeAll
     public static void beforeAll() {
         System.setProperty("webdriver.chromedriver.driver", "src/test/resources/chromedriver.exe");
-        driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
         driver.manage().window().maximize();
         driver.get("http://localhost:8080/");
         System.out.println("Запущен драйвер");
