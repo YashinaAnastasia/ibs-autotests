@@ -20,8 +20,9 @@ public class ItemsPage {
     private final WebDriver driver;
     private Connection connection;
 
-    public ItemsPage(WebDriver driver){
+    public ItemsPage(WebDriver driver, Connection connection){
         this.driver = driver;
+        this.connection = connection;
     }
 
     public void clickElement(By path){
@@ -58,14 +59,85 @@ public class ItemsPage {
         else {System.out.println("Запись " + name + " с указанными параметрами не найдена");}
         Assertions.assertTrue(itemExists, "Нет указанной записи в таблице");
     }
-    public void checkDB(String query, String name, String type, Integer exotic) throws SQLException {
+    public void searchNewItemDB(String name, String type, Integer exotic) throws SQLException {
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table")));
         Statement statement = connection.createStatement();
-        ResultSet resultSet = statement.executeQuery(query);
-        while(resultSet.next()){
-            String foodName= resultSet.getString("FOOD_NAME");
-            String foodType= resultSet.getString("FOOD_TYPE");
-            int foodExotic= resultSet.getInt("FOOD_EXOTIC");
+        ResultSet resultSet = statement.executeQuery("SELECT * FROM FOOD WHERE FOOD_NAME='" + name + "'");
+        resultSet.last();
+        Assertions.assertEquals(
+                name,
+                resultSet.getString("FOOD_NAME"),
+                "Значение поля 'Наименование' отличается");
+        Assertions.assertEquals(
+                type,
+                resultSet.getString("FOOD_TYPE"),
+                "Значение поля 'Тип' отличается");
+        Assertions.assertEquals(
+                exotic,
+                resultSet.getInt("FOOD_EXOTIC"),
+                "Значение поля 'Экзотический' отличается");
+        System.out.println("Запись " + name + " с указанными параметрами найдена");
+    }
+    public boolean searchExistingItemDB(String name, String type, Integer exotic, Boolean exists) throws SQLException {
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table")));
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(
+                "SELECT * FROM FOOD WHERE FOOD_NAME='" + name +
+                        "' AND FOOD_TYPE='" + type +
+                        "' AND FOOD_EXOTIC=" + exotic);
+        boolean itemExists = false;
+        while (resultSet.next()) {
+            if(resultSet.getString("FOOD_NAME").equals(name) &&
+                    resultSet.getString("FOOD_TYPE").equals(type) &&
+                    resultSet.getInt("FOOD_EXOTIC")==exotic){
+                itemExists=true;
+            }
         }
+        return itemExists == exists;
+    }
+    public void addingItem(String name, String type, Integer exotic) throws SQLException {
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table")));
+        Statement statement = connection.createStatement();
+        ResultSet lastItem = statement.executeQuery("SELECT * FROM FOOD");
+        lastItem.last();
+        int idLast = lastItem.getInt("FOOD_ID");
+        idLast++;
+        String insert = "INSERT INTO FOOD VALUES (" + idLast + ",'" + name + "','" + type
+                + "'," + exotic +")";
+        statement.executeUpdate(insert);
+        System.out.println("Добавлен товар с названием " + name);
+    }
+    public void countingItems(String name, String type, Integer exotic, Integer expectingCount ) throws SQLException {
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table")));
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(
+                "SELECT * FROM FOOD WHERE FOOD_NAME='" + name +
+                        "' AND FOOD_TYPE='" + type +
+                        "' AND FOOD_EXOTIC=" + exotic);
+        int count = 0;
+        while (resultSet.next()) {
+            if(resultSet.getString("FOOD_NAME").equals(name) &&
+                    resultSet.getString("FOOD_TYPE").equals(type) &&
+                    resultSet.getInt("FOOD_EXOTIC")==exotic){
+                count++;
+            }
+        }
+        Assertions.assertEquals(count, expectingCount, "Количество записей не соответсвует ожидаемому");
+        System.out.println("Найдено " + expectingCount +" записи " + name + " с указанными параметрами");
+    }
+    public void deletingItem() throws SQLException {
+        new WebDriverWait(driver, Duration.ofSeconds(5))
+                .until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//table")));
+        Statement statement = connection.createStatement();
+        ResultSet lastItem = statement.executeQuery("SELECT * FROM FOOD");
+        lastItem.last();
+        String nameLast = lastItem.getString("FOOD_NAME");
+        String insert = "DELETE FROM FOOD WHERE FOOD_NAME='"  + nameLast + "' ";
+        statement.executeUpdate(insert);
     }
 
 }

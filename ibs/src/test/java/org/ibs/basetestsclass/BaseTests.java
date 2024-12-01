@@ -1,5 +1,6 @@
 package org.ibs.basetestsclass;
 
+import org.h2.jdbc.JdbcConnection;
 import org.ibs.tests.ItemsPage;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -12,13 +13,15 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.concurrent.TimeUnit;
 
 public class BaseTests {
 
     protected static WebDriver driver = new ChromeDriver();
-    public ItemsPage page = new ItemsPage(driver);
-    static Connection connection;
+    protected static Connection connection;
+    public ItemsPage page = new ItemsPage(driver, connection);
+
 
     @BeforeAll
     public static void beforeAll() throws SQLException {
@@ -27,12 +30,10 @@ public class BaseTests {
         driver.manage().window().maximize();
         driver.get("http://localhost:8080/");
         System.out.println("Запущен драйвер");
-
         connection = DriverManager.getConnection(
-                " jdbc:h2:tcp://localhost:9092/mem:testdb",
+                "jdbc:h2:tcp://localhost:9092/mem:testdb",
                 "user",
-                "pass"
-                );
+                "pass");
     }
 
     @BeforeEach
@@ -43,18 +44,23 @@ public class BaseTests {
     }
 
     @AfterEach
-    public void afterEach() {
+    public void afterEach() throws SQLException {
+        page.deletingItem();
         driver.findElement(By.id("navbarDropdown")).click();
         driver.findElement(By.id("reset")).click();
         System.out.println("Созданная запись о товаре удалена");
     }
 
     @AfterAll
-   public static void afterAll(){
+   public static void afterAll() throws SQLException {
+        connection.close();
+        if(connection.isClosed()){
+            System.out.println("Отключение от БД");
+        };
         if (driver != null) {
             driver.quit();
             driver = null;
+            System.out.println("Выход из драйвера");
         }
-        System.out.println("Выход из драйвера");
     }
 }
