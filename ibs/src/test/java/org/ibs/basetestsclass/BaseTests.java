@@ -33,8 +33,8 @@ public class BaseTests {
 
     @AfterEach
     public void afterEach() {
-        driver.findElement(By.xpath("//a[@id='navbarDropdown']")).click();
-        driver.findElement(By.xpath("//a[@id='reset']")).click();
+        driver.findElement(By.id("navbarDropdown")).click();
+        driver.findElement(By.id("reset")).click();
         System.out.println("Созданная запись о товаре удалена");
     }
 
