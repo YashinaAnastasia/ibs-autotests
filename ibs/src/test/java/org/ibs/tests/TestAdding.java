@@ -4,6 +4,8 @@ import org.ibs.basetestsclass.BaseTests;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
 
+import java.sql.SQLException;
+
 public class TestAdding extends BaseTests {
 
     public ItemsPage page = new ItemsPage(driver);
@@ -45,4 +47,20 @@ public class TestAdding extends BaseTests {
         page.checkTable(By.xpath("//table"), "Кабачок", "Овощ", "false");
     }
 
+    @Test
+    void addingNew() throws SQLException {
+        page.clickElement(By.xpath("//button[@data-toggle='modal']"));
+        page.sendKeys(By.id("name"),"Кабачок");
+        page.selectOption("Овощ");
+        page.clickElement(By.id("save"));
+        page.checkDB("SELECT * FROM FOOD WHERE FOOD_NAME='Груша'", "Кабачок", "Овощ", 0);
+    }
+//    @Test
+//    void addingExisting(){
+//        page.clickElement(By.xpath("//button[@data-toggle='modal']"));
+//        page.sendKeys(By.id("name"),"Кабачок");
+//        page.selectOption("Овощ");
+//        page.clickElement(By.id("save"));
+//        page.checkTable(By.xpath("//table"), "Кабачок", "Овощ", "false");
+//    }
 }

@@ -8,12 +8,17 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.Duration;
 import java.util.List;
 
 public class ItemsPage {
 
     private final WebDriver driver;
+    private Connection connection;
 
     public ItemsPage(WebDriver driver){
         this.driver = driver;
@@ -52,6 +57,15 @@ public class ItemsPage {
         if(itemExists){ System.out.println("Запись " + name + " с указанными параметрами найдена");}
         else {System.out.println("Запись " + name + " с указанными параметрами не найдена");}
         Assertions.assertTrue(itemExists, "Нет указанной записи в таблице");
+    }
+    public void checkDB(String query, String name, String type, Integer exotic) throws SQLException {
+        Statement statement = connection.createStatement();
+        ResultSet resultSet = statement.executeQuery(query);
+        while(resultSet.next()){
+            String foodName= resultSet.getString("FOOD_NAME");
+            String foodType= resultSet.getString("FOOD_TYPE");
+            int foodExotic= resultSet.getInt("FOOD_EXOTIC");
+        }
     }
 
 }

@@ -8,20 +8,31 @@ import org.junit.jupiter.api.BeforeEach;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 public class BaseTests {
 
     protected static WebDriver driver = new ChromeDriver();
     public ItemsPage page = new ItemsPage(driver);
+    static Connection connection;
 
     @BeforeAll
-    public static void beforeAll() {
+    public static void beforeAll() throws SQLException {
         System.setProperty("webdriver.chromedriver.driver", "src/test/resources/chromedriver.exe");
         driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
         driver.manage().window().maximize();
         driver.get("http://localhost:8080/");
         System.out.println("Запущен драйвер");
+
+        connection = DriverManager.getConnection(
+                " jdbc:h2:tcp://localhost:9092/mem:testdb",
+                "user",
+                "pass"
+                );
     }
 
     @BeforeEach
